@@ -130,7 +130,6 @@ int main() {
     setlocale(LC_ALL, "");
     ExpenseTracker tracker;
     
-
     int choice;
     std::cout << "Выберите действие:" << std::endl;
     std::cout << "1. Добавить новую категорию расходов" << std::endl;
