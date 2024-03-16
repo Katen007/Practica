@@ -1,0 +1,6 @@
+# ninja log v5
+170	976	7323219341012962	ExpenseTrackerLib/CMakeFiles/ExpenseTrackerLib.dir/ExpenseTracker.cpp.obj	f68a2933eb8e3fd7
+166	989	7323219341122983	CMakeFiles/1_iteration_cmake.dir/ExpenseTrackerLib/ExpenseTracker.cpp.obj	ab1b4f66f8f2628e
+976	1057	7323219341523069	ExpenseTrackerLib/ExpenseTrackerLib.lib	841ecac4cffe4500
+160	961	7323219340852938	CMakeFiles/1_iteration_cmake.dir/main.cpp.obj	44db54e0f76b44a7
+1057	1358	7323219343844053	1_iteration_cmake.exe	89b78f37ab42d84a

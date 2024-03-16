@@ -1,0 +1,6 @@
+D:/Downloads/visuals/1_iteration_cmake/out/build/x64-debug/CMakeFiles/1_iteration_cmake.dir
+D:/Downloads/visuals/1_iteration_cmake/out/build/x64-debug/CMakeFiles/edit_cache.dir
+D:/Downloads/visuals/1_iteration_cmake/out/build/x64-debug/CMakeFiles/rebuild_cache.dir
+D:/Downloads/visuals/1_iteration_cmake/out/build/x64-debug/ExpenseTrackerLib/CMakeFiles/ExpenseTrackerLib.dir
+D:/Downloads/visuals/1_iteration_cmake/out/build/x64-debug/ExpenseTrackerLib/CMakeFiles/edit_cache.dir
+D:/Downloads/visuals/1_iteration_cmake/out/build/x64-debug/ExpenseTrackerLib/CMakeFiles/rebuild_cache.dir
