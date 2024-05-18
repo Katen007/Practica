@@ -1,91 +1,4 @@
-
-#include <QApplication>
-#include <QWidget>
-#include <QVBoxLayout>
-#include <QPushButton>
-#include <QLabel>
-#include <QLineEdit>
-#include <QComboBox>
-#include <QInputDialog>
-#include <iostream>
-#include <vector>
-#include <QFile>
-#include <QMessageBox>
-#include <QFileDialog>
-class Category {
-public:
-    Category(const std::string& name, double amount) : name(name), amount(amount) {}
-    std::string getName() const { return name; }
-
-private:
-    std::string name;
-    double amount;
-
-};
-
-
-class ExpenseTracker {
-private:
-    std::vector<Category> expenseCategories;
-    std::vector<Category> incomeCategories;
-
-public:
-    ExpenseTracker() {
-
-        expenseCategories = {
-            Category("Еда", 0.0),
-            Category("Одежда", 0.0),
-            Category("Машина", 0.0)
-        }
-        ;
-        incomeCategories = {
-                            Category("Работа", 0.0),
-                            Category("Хобби", 0.0),
-
-        };}
-    void addExpenseCategory(const std::string& categoryName, double amount) {
-        expenseCategories.push_back(Category(categoryName, amount));
-    }
-
-    void addIncomeCategory(const std::string& categoryName, double amount) {
-        incomeCategories.push_back(Category(categoryName, amount));
-    }
-
-    const std::vector<Category>& getExpenseCategories() const {
-        return expenseCategories;
-    }
-
-    const std::vector<Category>& getIncomeCategories() const {
-        return incomeCategories;
-    }
-};
-void loadCategoriesFromFile(ExpenseTracker& tracker, const QString& filename,double &totalExpenses, double & totalIncome) {
-    QFile file(filename);
-
-    if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        QTextStream in(&file);
-        while (!in.atEnd()) {
-            QString line = in.readLine();
-            QStringList parts = line.split(",");
-            if (parts.size() == 3) {
-                double amount = parts[1].toDouble();
-                std::string type=parts[2].toStdString();
-                if (type=="Расход"){
-                    totalExpenses+=amount;
-                }
-                else{
-                    totalIncome+=amount;
-                }
-                //std::cout<<type<<std::endl;
-                //tracker.addExpenseCategory(categoryName.toStdString(), amount);
-                // Add to income categories as needed
-            }
-        }
-        file.close();
-    } else {
-
-    }
-}
+#include "Header.h"
 
 int main(int argc, char *argv[]) {
     setlocale (LC_ALL, "Russian");
@@ -97,12 +10,12 @@ int main(int argc, char *argv[]) {
 
     QPushButton *startButton = new QPushButton("Начать");
     QPushButton *exitButton = new QPushButton("Выход");
+    QPushButton *statButton = new QPushButton("История");
     QLabel *typeLabel = new QLabel("Выберите тип операции:");
     QComboBox *typeComboBox = new QComboBox;
     QPushButton *showBalanceButton = new QPushButton("Показать баланс");
     typeComboBox->addItem("Расход");
     typeComboBox->addItem("Доход");
-
 
     QLabel *categoryLabel = new QLabel("Выберите категорию:");
     QComboBox *categoryComboBox = new QComboBox;
@@ -112,45 +25,51 @@ int main(int argc, char *argv[]) {
 
     QPushButton *addCategoryButton = new QPushButton("Добавить категорию");
 
-  QFile expenseFile("C:/Users/vilen/Downloads/expense.txt");
-     QString expenseFile1;
-  QMessageBox msgBox(QMessageBox::Question, "Выбор кошелька",
-                     "Создать новый кошелек или продолжить старый?",
-                     QMessageBox::Yes | QMessageBox::No);
+    IDataHandler* dataHandler = new FileDataHandler();
 
-  // Set default button
-  msgBox.setDefaultButton(QMessageBox::Yes);
+    QFile expenseFile        ("D:/qt/build-untitled-Desktop_Qt_shared_MinGW_w64_MINGW64_MSYS2-Debug/pay.txt");
+    QString expenseCategories("D:/qt/build-untitled-Desktop_Qt_shared_MinGW_w64_MINGW64_MSYS2-Debug/expenseCategories.txt");
+    QString incomeCategories ("D:/qt/build-untitled-Desktop_Qt_shared_MinGW_w64_MINGW64_MSYS2-Debug/incomeCategories.txt");
 
-  // Get button pointers and change text
-  QAbstractButton* yesButtonAbstract = msgBox.button(QMessageBox::Yes);
-  QPushButton* yesButton = dynamic_cast<QPushButton*>(yesButtonAbstract);
-  if (yesButton) { // Check if cast is successful
-      yesButton->setText("Create New");
-  }
-  double totalExpenses = 0.0;
-  double totalIncome = 0.0;
+    loadCategoryName(tracker, expenseCategories, incomeCategories);
+    QString expenseFile1;
+    QMessageBox msgBox(QMessageBox::Question, "Выбор кошелька",
+                       "Создать новый кошелек или продолжить старый?",
+                       QMessageBox::Yes | QMessageBox::No);
 
-  QAbstractButton* noButtonAbstract = msgBox.button(QMessageBox::No);
-  QPushButton* noButton = dynamic_cast<QPushButton*>(noButtonAbstract);
-  if (noButton) { // Check if cast is successful
-      noButton->setText("Continue Old");
-  }
+    // Set default button
+    msgBox.setDefaultButton(QMessageBox::Yes);
 
-  // Convert the return value to QMessageBox::StandardButton
-     int ret = msgBox.exec();
-      QMessageBox::StandardButton reply;
-  switch (ret) {
-  case QMessageBox::Yes:
-      reply = QMessageBox::Yes;
-      break;
-  case QMessageBox::No:
-      reply = QMessageBox::No;
-      break;
-  // ... (handle other cases like Cancel, Close, etc. if needed) ...
-  default:
-      // Handle unexpected return values
-      break;
-  }
+    // Get button pointers and change text
+    QAbstractButton* yesButtonAbstract = msgBox.button(QMessageBox::Yes);
+    QPushButton* yesButton = dynamic_cast<QPushButton*>(yesButtonAbstract);
+    if (yesButton) { // Check if cast is successful
+        yesButton->setText("Create New");
+    }
+    double totalExpenses = 0.0;
+    double totalIncome = 0.0;
+    QAbstractButton* noButtonAbstract = msgBox.button(QMessageBox::No);
+    QPushButton* noButton = dynamic_cast<QPushButton*>(noButtonAbstract);
+    if (noButton) { // Check if cast is successful
+        noButton->setText("Continue Old");
+    }
+
+    // Convert the return value to QMessageBox::StandardButton
+    int ret = msgBox.exec();
+    QMessageBox::StandardButton reply;
+    switch (ret) {
+    case QMessageBox::Yes:
+        reply = QMessageBox::Yes;
+        break;
+    case QMessageBox::No:
+        reply = QMessageBox::No;
+        break;
+    // ... (handle other cases like Cancel, Close, etc. if needed) ...
+    default:
+        // Handle unexpected return values
+        break;
+    }
+
     if (reply == QMessageBox::Yes) {
         // Create new wallet
         expenseFile1 = QFileDialog::getSaveFileName(
@@ -158,6 +77,12 @@ int main(int argc, char *argv[]) {
         if (expenseFile1.isEmpty()) { // Check if QString is empty
             return 1; // Cancel if no file selected
         }
+        expenseFile.setFileName(expenseFile1);
+        if (!expenseFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
+            QMessageBox::warning(nullptr, "Ошибка", "Не удалось создать файл.");
+            return 1;
+        }
+        expenseFile.close(); // Закрываем файл после создания.
     } else {
         // Continue old wallet
         expenseFile1 = QFileDialog::getOpenFileName(
@@ -165,7 +90,9 @@ int main(int argc, char *argv[]) {
         if (expenseFile1.isEmpty()) { // Check if QString is empty
             return 1; // Cancel if no file selected
         }
-        loadCategoriesFromFile(tracker, expenseFile1,totalExpenses,totalIncome); // Load categories from file
+        expenseFile.setFileName(expenseFile1);
+        dataHandler->loadData(tracker, expenseFile1,totalExpenses,totalIncome);
+        //loadCategoriesFromFile(tracker, expenseFile1,totalExpenses,totalIncome);
     }
 
     const std::string expenses = "Расходы: "+std::to_string(int(totalExpenses));
@@ -193,20 +120,19 @@ int main(int argc, char *argv[]) {
     layout->addWidget(expensesLabel);
     layout->addWidget(incomeLabel);
     layout->addWidget(showBalanceButton);
+    layout->addWidget(statButton);
     window.setLayout(layout);
     window.show();
-
-
     // Function to update expense and income labels
 
     bool startClicked = false;
-QString currentExpenseType = "Расход";
+    QString currentExpenseType = "Расход";
     QObject::connect(typeComboBox, &QComboBox::currentTextChanged, [&](const QString &text){
         currentExpenseType = text;
     });
     QObject::connect(startButton, &QPushButton::clicked, [&](){
         startClicked = true;
-         // Запретить изменение типа операции после начала
+            // Запретить изменение типа операции после начала
         categoryLabel->setEnabled(true);
         categoryComboBox->setEnabled(true);
         amountLabel->setEnabled(true);
@@ -226,7 +152,6 @@ QString currentExpenseType = "Расход";
             }
         }
     });
-
     QObject::connect(exitButton, &QPushButton::clicked, [&](){
         app.exit();
     });
@@ -237,8 +162,11 @@ QString currentExpenseType = "Расход";
         if (ok && !newCategoryName.isEmpty()) {
             if (typeComboBox->currentText() == "Расход") {
                 tracker.addExpenseCategory(newCategoryName.toStdString(), 0.0);
+                saveCategoryName(newCategoryName, expenseCategories);
+
             } else if (typeComboBox->currentText() == "Доход") {
                 tracker.addIncomeCategory(newCategoryName.toStdString(), 0.0);
+                saveCategoryName(newCategoryName, incomeCategories);
             }
         }
     });
@@ -252,7 +180,7 @@ QString currentExpenseType = "Расход";
     QObject::connect(amountInput, &QLineEdit::returnPressed,  [&]() {
         if (!startClicked) return;
 
-        QString category = categoryComboBox->currentText();
+        QString name = categoryComboBox->currentText();
         QString amountText = amountInput->text();
 
         bool conversionOk;
@@ -267,23 +195,50 @@ QString currentExpenseType = "Расход";
             totalIncome += amount;
         }
         updateCounters();
-        // Determine expense type (assuming you have a way to do this)
-         // Replace with your logic to determine if it's an expense
 
-        // Write to file
-        if (expenseFile.open(QIODevice::Append | QIODevice::Text)) {
-            QTextStream out(&expenseFile);
-            out << category << "," << amount << "," << currentExpenseType << "\n";
-            expenseFile.close();
-        } else {
-            // Handle file opening error
-        }
+        dataHandler->saveCategory(name,amountText, currentExpenseType, expenseFile1);
 
         // Clear input fields (optional)
         amountInput->clear();
         // ... (you might want to clear the category selection as well) ...
     });
+    QMainWindow *newWindow = new QMainWindow;
+    newWindow->setWindowTitle("Содержимое файла");
 
+    // Создать текстовое поле для нового окна
+    QTextEdit *newTextEdit = new QTextEdit;
+    newTextEdit->setReadOnly(true);
+
+    // Разместить текстовое поле в новом окне
+    newWindow->setCentralWidget(newTextEdit);
+
+    QObject::connect(statButton, &QPushButton::clicked, [&]() {
+        // Открыть диалоговое окно для выбора файла
+        QString fileName = expenseFile1;
+
+        if (!fileName.isEmpty()) {
+            // Открыть файл для чтения
+            QFile file(fileName);
+            if (file.open(QFile::ReadOnly | QFile::Text)) {
+                // Создать входной текстовый поток
+                QTextStream in(&file);
+
+                // Считать содержимое файла
+                QString text = in.readAll();
+
+                // Закрыть файл
+                file.close();
+
+                // Если новое окно еще не открыто, открыть его и установить содержимое текстового поля
+                newWindow->close();
+                newWindow->show();
+                newTextEdit->setPlainText(text);
+
+            } else {
+                // Сообщить об ошибке
+                qCritical() << "Не удалось открыть файл для чтения";
+            }
+        }
+    });
     return app.exec();
 }
-
